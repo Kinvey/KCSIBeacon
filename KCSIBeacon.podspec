@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
   # s.screenshots  = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
 
 
-  s.license          = { :type => 'Apache License, Version 2.0', :file => '../LICENSE.md' }
+  s.license          = { :type => 'Apache License, Version 2.0', :file => 'LICENSE.md' }
   s.author           = { "Michael Katz" => "michael@kinvey.com" }
   s.social_media_url = "http://twitter.com/Kinvey"
 
@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/KinveyLabs/KCSIBeacon.git", :commit => "e88bcc02a9d8544377cabff2dfb01b984772c110" }
+  s.source       = { :git => "https://github.com/KinveyLabs/KCSIBeacon.git", :branch => "master"}
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -48,8 +48,8 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = 'KCSIBeacon', 'KCSIBeacon/**/*.{h,m}'
-  s.exclude_files = 'Classes/Exclude'
+  s.source_files  = 'KCSIBeacon/KCSIBeacon/**/*.{h,m}'
+  #s.exclude_files = 'Classes/Exclude'
 
   # s.public_header_files = 'Classes/**/*.h'
 
