@@ -2,14 +2,26 @@
 //  KCSIBeaconTests.m
 //  KCSIBeaconTests
 //
-//  Created by Michael Katz on 3/11/14.
-//  Copyright (c) 2014 Kinvey. All rights reserved.
+//  Copyright 2014 Kinvey, Inc
 //
-
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
 #import <XCTest/XCTest.h>
 
-@interface KCSIBeaconTests : XCTestCase
+#import "KCSBeaconManager.h"
 
+@interface KCSIBeaconTests : XCTestCase <KCSBeaconManagerDelegate>
+@property (nonatomic, strong) NSError* rangingError;
 @end
 
 @implementation KCSIBeaconTests
@@ -28,7 +40,17 @@
 
 - (void)testExample
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    KCSBeaconManager* manager = [[KCSBeaconManager alloc] init];
+    manager.delegate = self;
+    [manager startMonitoringForRegion:[[NSUUID UUID] UUIDString] identifier:@"com.kinvey.foo"];
+    while (1) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    }
+}
+
+- (void) rangingFailedForRegion:(CLBeaconRegion *)region withError:(NSError *)error
+{
+    self.rangingError = error;
 }
 
 @end

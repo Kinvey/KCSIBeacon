@@ -16,7 +16,7 @@
 		279876A118CF46A0001F33FD /* libKCSIBeacon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798768918CF46A0001F33FD /* libKCSIBeacon.a */; };
 		279876A718CF46A0001F33FD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 279876A518CF46A0001F33FD /* InfoPlist.strings */; };
 		279876A918CF46A0001F33FD /* KCSIBeaconTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 279876A818CF46A0001F33FD /* KCSIBeaconTests.m */; };
-		279876B418CF4D3E001F33FD /* KSBeaconManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 279876B318CF4D3E001F33FD /* KSBeaconManager.m */; };
+		279876B418CF4D3E001F33FD /* KCSBeaconManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 279876B318CF4D3E001F33FD /* KCSBeaconManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,8 +54,8 @@
 		279876A418CF46A0001F33FD /* KCSIBeaconTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KCSIBeaconTests-Info.plist"; sourceTree = "<group>"; };
 		279876A618CF46A0001F33FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		279876A818CF46A0001F33FD /* KCSIBeaconTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KCSIBeaconTests.m; sourceTree = "<group>"; };
-		279876B218CF4D3E001F33FD /* KSBeaconManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSBeaconManager.h; sourceTree = "<group>"; };
-		279876B318CF4D3E001F33FD /* KSBeaconManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSBeaconManager.m; sourceTree = "<group>"; };
+		279876B218CF4D3E001F33FD /* KCSBeaconManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCSBeaconManager.h; sourceTree = "<group>"; };
+		279876B318CF4D3E001F33FD /* KCSBeaconManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KCSBeaconManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,8 +115,8 @@
 			children = (
 				2798769118CF46A0001F33FD /* KCSIBeacon.h */,
 				2798769318CF46A0001F33FD /* KCSIBeacon.m */,
-				279876B218CF4D3E001F33FD /* KSBeaconManager.h */,
-				279876B318CF4D3E001F33FD /* KSBeaconManager.m */,
+				279876B218CF4D3E001F33FD /* KCSBeaconManager.h */,
+				279876B318CF4D3E001F33FD /* KCSBeaconManager.m */,
 				2798768F18CF46A0001F33FD /* Supporting Files */,
 			);
 			path = KCSIBeacon;
@@ -230,7 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2798769418CF46A0001F33FD /* KCSIBeacon.m in Sources */,
-				279876B418CF4D3E001F33FD /* KSBeaconManager.m in Sources */,
+				279876B418CF4D3E001F33FD /* KCSBeaconManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,6 +411,7 @@
 				279876AE18CF46A0001F33FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		279876AF18CF46A0001F33FD /* Build configuration list for PBXNativeTarget "KCSIBeaconTests" */ = {
 			isa = XCConfigurationList;
@@ -419,6 +420,7 @@
 				279876B118CF46A0001F33FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
