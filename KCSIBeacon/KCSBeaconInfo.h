@@ -26,6 +26,7 @@
 - (KCSBeaconInfo*) kcsBeaconInfo;
 @end
 
+// This is handy since instances change on each call
 @interface KCSBeaconInfo : NSObject
 @property (nonatomic, copy) NSString* uuid;
 @property (nonatomic, copy) NSString* identifier;
@@ -34,6 +35,9 @@
 @property (nonatomic) CLLocationAccuracy accuracy;
 @property (nonatomic) CLProximity proximity;
 @property (nonatomic) NSInteger rssi;
+
+- (NSDictionary*) plistObject;
+- (instancetype) initWithPlistObject:(NSDictionary*)plistObject;
 
 
 @end

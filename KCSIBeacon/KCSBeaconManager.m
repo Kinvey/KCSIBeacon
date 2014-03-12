@@ -19,6 +19,8 @@
 
 #import "KCSBeaconManager.h"
 
+#import "KCSBeaconInfo.h"
+
 @import UIKit;
 
 @interface KCSBeaconManager () <CLLocationManagerDelegate>
@@ -26,10 +28,9 @@
 @property (nonatomic, strong) CLBeacon* lastBeacon;
 @property (nonatomic, strong) NSDate* lastRanging;
 @property (nonatomic, strong) NSDate* lastBoundary;
+@property (nonatomic, strong) NSMutableSet* insideRegions;
 @end
 
-
-#define kUUID @"999DAFD9-3BAF-4DC1-8019-907B52ECE096"
 
 @implementation KCSBeaconManager
 
@@ -41,6 +42,7 @@
         _lastRanging = nil;
         _lastBoundary = nil;
         _monitoringInterval = 0;
+        _insideRegions = [NSMutableSet set];
     }
     return self;
 }
@@ -87,6 +89,22 @@
 
 - (void) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier major:(NSNumber*)major minor:(NSNumber*)minor
 {
+    /* TODO
+     + authorizationStatus
+     + locationServicesEnabled
+     + deferredLocationUpdatesAvailable
+     + significantLocationChangeMonitoringAvailable
+     + headingAvailable
+     + isMonitoringAvailableForClass:
+     + isRangingAvailable
+     */
+    
+    
+    /* TODO
+     You can also postpone notifying a user upon entering a beacon region until the user turns on the device’s display. To do so, simply set the value of the beacon region’s notifyEntryStateOnDisplay property value to YES and set the region’s notifyOnEntry property to NO when you register the beacon region. To prevent redundant notifications from being delivered to the user, post a local notification only once per region entry.
+     
+    */
+    
     // Create the beacon region to be monitored.
     NSUUID* uuid = [[NSUUID alloc] initWithUUIDString:UUIDString];
     
@@ -102,32 +120,30 @@
     beaconRegion.notifyEntryStateOnDisplay = YES;
     
     // Register the beacon region with the location manager.
-    [self.locationManager startMonitoringForRegion:beaconRegion];
     self.locationManager.delegate = self;
+    for (CLBeaconRegion* region in self.locationManager.monitoredRegions) {
+        if ([[region kcsBeaconInfo] isEqual:[beaconRegion kcsBeaconInfo]]) {
+            [self.locationManager stopMonitoringForRegion:region];
+        }
+    }
+    [self.locationManager startMonitoringForRegion:beaconRegion];
+
     
     _lastRanging = [NSDate date];
 }
 
 
-- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region
+- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLBeaconRegion *)region
 {
     NSLog(@"%@", region);
-    CLBeaconRegion* reg = (CLBeaconRegion*)region;
-    NSNumber* maj = reg.major;
-
     if (state == CLRegionStateInside) {
-        UILocalNotification *notification = [[UILocalNotification alloc] init];
         
-        notification.alertBody = NSLocalizedString(@"You're inside the region", @"");
-        if (maj) {
-            notification.userInfo = @{@"inside":maj};
+        if (![self.insideRegions containsObject:[region kcsBeaconInfo]]) {
+            [self locationManager:manager didEnterRegion:region];
         }
-        notification.userInfo = @{@"uuid":reg.identifier};
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-        
-        [self.locationManager startRangingBeaconsInRegion:reg];
+        [self.locationManager startRangingBeaconsInRegion:region];
     } else if (state == CLRegionStateOutside) {
-        [self.locationManager stopRangingBeaconsInRegion:reg];
+        [self.locationManager stopRangingBeaconsInRegion:region];
     } else {
         //unknown?
     }
@@ -147,12 +163,15 @@
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
+- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLBeaconRegion *)region
 {
     if ([[NSDate date] timeIntervalSinceDate:self.lastBoundary] < self.monitoringInterval) {
         return;
     }
+    
     self.lastBoundary = [NSDate date];
+    [self.insideRegions addObject:[region kcsBeaconInfo]];
+    
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(enteredRegion:)]) {
         [self.delegate enteredRegion:(CLBeaconRegion*)region];
@@ -161,7 +180,7 @@
     if (self.postsLocalNotification) {
         UILocalNotification *notification = [[UILocalNotification alloc] init];
         notification.alertBody = NSLocalizedString(@"You're inside the region %@", region.identifier);
-        notification.userInfo = @{@"region":region, @"event":@"enter"};
+        notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"enter"};
 
         /*
          If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
@@ -171,7 +190,7 @@
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
+- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLBeaconRegion *)region
 {
     if ([[NSDate date] timeIntervalSinceDate:self.lastBoundary] < self.monitoringInterval) {
         return;
@@ -185,7 +204,7 @@
     if (self.postsLocalNotification) {
         UILocalNotification *notification = [[UILocalNotification alloc] init];
         notification.alertBody = NSLocalizedString(@"You're outside the region %@", region.identifier);
-        notification.userInfo = @{@"region":region, @"event":@"exit"};
+        notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"exit"};
         
         /*
          If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.

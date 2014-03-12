@@ -26,12 +26,34 @@
     beaconInfo.uuid = [self.proximityUUID UUIDString];
     beaconInfo.major = [self.major unsignedIntValue];
     beaconInfo.minor = [self.minor unsignedIntValue];
+    beaconInfo.identifier = self.identifier;
     return beaconInfo;
 }
 
 @end
 
 @implementation KCSBeaconInfo
+
+- (NSDictionary *)plistObject
+{
+    NSMutableDictionary* object = [NSMutableDictionary dictionary];
+    if (self.uuid) object[@"uuid"] = self.uuid;
+    if (self.identifier) object[@"identifier"] = self.identifier;
+    if (self.major) object[@"major"] = @(self.major);
+    if (self.minor) object[@"minor"] = @(self.minor);
+    return object;
+}
+
+- (instancetype)initWithPlistObject:(NSDictionary *)plistObject
+{
+    self = [super init];
+    if (self) {
+        [plistObject enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [self setValue:obj forKey:key];
+        }];
+    }
+    return self;
+}
 
 - (BOOL)isEqual:(KCSBeaconInfo*)object
 {
@@ -44,6 +66,11 @@
 - (NSUInteger)hash
 {
     return [self.uuid hash] + self.minor + self.major;
+}
+
+- (NSString *)debugDescription
+{
+    return [NSString stringWithFormat:@"%@ %@", [super debugDescription], [self plistObject]];
 }
 
 @end
