@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSDate* lastRanging;
 @property (nonatomic, strong) NSDate* lastBoundary;
 @property (nonatomic, strong) NSMutableSet* insideRegions;
+@property (nonatomic, strong) NSMutableSet* knownRegions;
 @end
 
 
@@ -43,6 +44,7 @@
         _lastBoundary = nil;
         _monitoringInterval = 0;
         _insideRegions = [NSMutableSet set];
+        _knownRegions = [NSMutableSet set];
     }
     return self;
 }
@@ -127,8 +129,8 @@
         }
     }
     [self.locationManager startMonitoringForRegion:beaconRegion];
+    [self checkForEntryAfterDelay:beaconRegion]; //some beacon types don't trigger entry events if inside
 
-    
     _lastRanging = [NSDate date];
 }
 
@@ -136,6 +138,7 @@
 - (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLBeaconRegion *)region
 {
     NSLog(@"%@", region);
+    [self.knownRegions addObject:[region kcsBeaconInfo]];
     if (state == CLRegionStateInside) {
         
         if (![self.insideRegions containsObject:[region kcsBeaconInfo]]) {
@@ -188,6 +191,10 @@
          */
         [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     }
+    
+    if (![[manager rangedRegions] containsObject:region]) {
+        [manager startRangingBeaconsInRegion:region];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLBeaconRegion *)region
@@ -196,6 +203,7 @@
         return;
     }
     self.lastBoundary = [NSDate date];
+    [self.insideRegions removeObject:[region kcsBeaconInfo]];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(exitedRegion:)]) {
         [self.delegate exitedRegion:(CLBeaconRegion*)region];
@@ -214,6 +222,21 @@
     }
 }
 
+- (void) checkForEntryAfterDelay:(CLBeaconRegion*)r
+{
+    [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(checkForEntry:) userInfo:@{@"region":r} repeats:NO];
+}
+
+- (void) checkForEntry:(NSTimer*)timer
+{
+    CLBeaconRegion* region = timer.userInfo[@"region"];
+    if (region && ![self.knownRegions containsObject:[region kcsBeaconInfo]]) {
+        [self.locationManager startRangingBeaconsInRegion:region];
+    }
+}
+
+#pragma mark - ranging
+
 - (void) locationManager:(CLLocationManager *)manager rangingBeaconsDidFailForRegion:(CLBeaconRegion *)region withError:(NSError *)error
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(rangingFailedForRegion:withError:)]) {
@@ -224,39 +247,45 @@
 - (void)locationManager:(CLLocationManager *)manager didRangeBeacons:(NSArray *)beacons inRegion:(CLBeaconRegion *)region
 {
     CLBeacon* closestBeacon = nil;
+    
+    if (![self.knownRegions containsObject:[region kcsBeaconInfo]]) {
+        if (beacons.count == 0) {
+            [manager stopRangingBeaconsInRegion:region];
+        }
+        [self.knownRegions addObject:[region kcsBeaconInfo]];
+    }
+    
     for (CLBeacon* beacon in beacons) {
+        if (![self.insideRegions containsObject:[region kcsBeaconInfo]]) {
+            [self locationManager:manager didEnterRegion:region];
+        }
+        
         if (self.delegate && [self.delegate respondsToSelector:@selector(rangedBeacon:)]) {
             [self.delegate rangedBeacon:beacon];
         }
-        NSLog(@"beacons, %@: %ld", beacon, (long)beacon.proximity);
+
         if (!closestBeacon) {
             closestBeacon = beacon;
         } else {
-            if (beacon.proximity > CLProximityUnknown) {
-                if (beacon.proximity < closestBeacon.proximity) {
-                    closestBeacon = beacon;
-                } else if (beacon.proximity == closestBeacon.proximity && beacon.accuracy < closestBeacon.accuracy) {
-                    closestBeacon = beacon;
-                }
-            } else if (closestBeacon.proximity == CLProximityUnknown && beacon.accuracy < closestBeacon.accuracy) {
+            if ([closestBeacon compareByDistance:beacon] == NSOrderedDescending) {
                 closestBeacon = beacon;
             }
-            
         }
     }
     
     //Note that this can different CLBeacon instances, even for the same beacon
-    BOOL different = ![self.lastBeacon.proximityUUID isEqual:closestBeacon.proximityUUID] ||
-    ![self.lastBeacon.major isEqualToNumber:closestBeacon.major] ||
-    ![self.lastBeacon.minor isEqualToNumber:self.lastBeacon.minor];
+    BOOL different = ![[self.lastBeacon kcsBeaconInfo] isEqual:[closestBeacon kcsBeaconInfo]] && (self.lastBeacon == nil || [closestBeacon compareByDistance:self.lastBeacon] == NSOrderedAscending);
     
-    if (different && [self.lastRanging timeIntervalSinceNow] >= -self.monitoringInterval) {
+    if (different && [[NSDate date] timeIntervalSinceDate:self.lastRanging] >= self.monitoringInterval) {
         self.lastBeacon = closestBeacon;
         self.lastRanging = [NSDate date];
         
         if (self.delegate && [self.delegate respondsToSelector:@selector(newNearestBeacon:)]) {
             [self.delegate newNearestBeacon:self.lastBeacon];
         }
+    } else if ([[self.lastBeacon kcsBeaconInfo] isEqual:[closestBeacon kcsBeaconInfo]]) {
+        //need to update even though the same to capture most current info (including accuracy and proximity)
+        self.lastBeacon = closestBeacon;
     }
     
     

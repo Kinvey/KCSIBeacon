@@ -46,6 +46,21 @@
     return beaconInfo;
 }
 
+- (NSComparisonResult)compareByDistance:(CLBeacon *)beacon
+{
+    NSComparisonResult result = NSOrderedSame;
+    if (self.proximity > beacon.proximity) {
+        result = NSOrderedDescending;
+    } else if (self.proximity == beacon.proximity) {
+        result = [@(self.accuracy) compare:@(beacon.accuracy)];
+    } else { //self.proximity < beacon.proximity
+        if (self.proximity != CLProximityUnknown) {
+            result = NSOrderedAscending;
+        }
+    }
+    return result;
+}
+
 @end
 
 @implementation KCSBeaconInfo
@@ -96,6 +111,12 @@
 - (NSUInteger)hash
 {
     return [self.uuid hash] + self.minor + self.major;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    KCSBeaconInfo* newInfo = [[KCSBeaconInfo allocWithZone:zone] initWithPlistObject:[self plistObject]];
+    return newInfo;
 }
 
 - (NSString *)debugDescription

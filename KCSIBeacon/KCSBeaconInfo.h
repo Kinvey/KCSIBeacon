@@ -28,10 +28,11 @@
 
 @interface CLBeacon (KCSBeaconInfo)
 - (KCSBeaconInfo*) kcsBeaconInfo;
+- (NSComparisonResult) compareByDistance:(CLBeacon*)beacon;
 @end
 
 // This is handy since instances change on each call
-@interface KCSBeaconInfo : NSObject
+@interface KCSBeaconInfo : NSObject <NSCopying>
 @property (nonatomic, copy) NSString* uuid;
 @property (nonatomic, copy) NSString* identifier;
 @property (nonatomic) CLBeaconMajorValue major;
