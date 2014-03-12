@@ -32,6 +32,22 @@
 
 @end
 
+@implementation CLBeacon (KCSBeaconInfo)
+
+- (KCSBeaconInfo *)kcsBeaconInfo
+{
+    KCSBeaconInfo* beaconInfo = [[KCSBeaconInfo alloc] init];
+    beaconInfo.uuid = [self.proximityUUID UUIDString];
+    beaconInfo.major = [self.major unsignedIntValue];
+    beaconInfo.minor = [self.minor unsignedIntValue];
+    beaconInfo.accuracy = self.accuracy;
+    beaconInfo.proximity = self.proximity;
+    beaconInfo.rssi = self.rssi;
+    return beaconInfo;
+}
+
+@end
+
 @implementation KCSBeaconInfo
 
 - (NSDictionary *)plistObject
@@ -41,6 +57,9 @@
     if (self.identifier) object[@"identifier"] = self.identifier;
     if (self.major) object[@"major"] = @(self.major);
     if (self.minor) object[@"minor"] = @(self.minor);
+    if (self.accuracy) object[@"accuracy"] = @(self.accuracy);
+    if (self.proximity) object[@"proximity"] = @(self.proximity);
+    if (self.rssi) object[@"rssi"] = @(self.rssi);
     return object;
 }
 
@@ -54,6 +73,17 @@
     }
     return self;
 }
+
+- (void) mergeWithNewInfo:(KCSBeaconInfo*)newInfo
+{
+    if (newInfo.identifier && newInfo.identifier.length > 1) self.identifier = newInfo.identifier;
+    if (newInfo.major) self.major = newInfo.major;
+    if (newInfo.minor) self.minor = newInfo.minor;
+    if (newInfo.accuracy) self.accuracy = newInfo.accuracy;
+    if (newInfo.proximity) self.proximity = newInfo.proximity;
+    if (newInfo.rssi) self.rssi = newInfo.rssi;
+}
+
 
 - (BOOL)isEqual:(KCSBeaconInfo*)object
 {

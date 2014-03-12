@@ -26,6 +26,10 @@
 - (KCSBeaconInfo*) kcsBeaconInfo;
 @end
 
+@interface CLBeacon (KCSBeaconInfo)
+- (KCSBeaconInfo*) kcsBeaconInfo;
+@end
+
 // This is handy since instances change on each call
 @interface KCSBeaconInfo : NSObject
 @property (nonatomic, copy) NSString* uuid;
@@ -38,6 +42,6 @@
 
 - (NSDictionary*) plistObject;
 - (instancetype) initWithPlistObject:(NSDictionary*)plistObject;
-
+- (void) mergeWithNewInfo:(KCSBeaconInfo*)newInfo;
 
 @end

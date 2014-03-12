@@ -23,6 +23,7 @@
 @protocol KCSBeaconManagerDelegate <NSObject>
 @optional
 - (void) rangingFailedForRegion:(CLBeaconRegion*)region withError:(NSError*)error;
+- (void) rangedBeacon:(CLBeacon*)beacon;
 - (void) newNearestBeacon:(CLBeacon*)beacon;
 - (void) enteredRegion:(CLBeaconRegion*)region;
 - (void) exitedRegion:(CLBeaconRegion*)region;

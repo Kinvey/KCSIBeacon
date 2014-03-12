@@ -225,6 +225,9 @@
 {
     CLBeacon* closestBeacon = nil;
     for (CLBeacon* beacon in beacons) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(rangedBeacon:)]) {
+            [self.delegate rangedBeacon:beacon];
+        }
         NSLog(@"beacons, %@: %ld", beacon, (long)beacon.proximity);
         if (!closestBeacon) {
             closestBeacon = beacon;
