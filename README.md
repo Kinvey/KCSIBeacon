@@ -15,6 +15,43 @@ KCSIBeacon is available as a [CocoaPods](http://cocoapods.org) to install add to
     
 ## Usage
 
+### Setup
+1. Add to project with CocoaPods
+2. Import 
+
+         #import "KCSIBeacon.h"
+         
+3. Set up your class to conform to `KCSBeaconManagerDelegate`
+4. Create an instance of `KCSBeaconManager`
+
+        self.beaconManager = [[KCSBeaconManager alloc] init];
+        self.beaconManager.delegate = self;
+        
+
+5. Start Monitoring Beacon Regions, e.g.
+
+        [self.beaconManager startMonitoringForRegion:@"41AF5763-174C-4C2C-9E4A-C99EAB4AE668" identifier:@"ipad" major:@(10) minor:@(1)];
+        [self.beaconManager startMonitoringForRegion:@"F7826DA6-4FA2-4E98-8024-BC5B71E0893E" identifier:@"kontakt"]; //monitors all major & minor
+    
+6. Implement protocol methods to receive interesting events:
+     * Ranging events, region enter/exit, and if there is a new nearest beacon.
+     * e.g:
+     
+       - (void)newNearestBeacon2:(CLBeacon *)beacon
+       {
+           //show a modal for new beacon
+           if ([beacon.proximityUUID isEqual:kUUID] && [beacon.major intValue] == 1) {
+                NearbyBeaconViewController* nearby = [[NearbyBeaconViewController alloc] initWithNibName:@"NearbyBeaconViewController" bundle:nil];
+                [self presentViewController:nearby animated:YES completion:nil];
+           }
+       }
+
+### Documentation
+* [Cocoadocs](http://cocoadocs.org/docsets/KCSIBeacon)
+
+### Example project
+* [iBeacon-Demo](https://github.com/mikekatz/iBeacon-Demo)
+
 ## System Requirements
 * iOS 7 or later (uses iBeacons)
 
