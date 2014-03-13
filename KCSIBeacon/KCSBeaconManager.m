@@ -275,7 +275,7 @@
     }
     
     //Note that this can different CLBeacon instances, even for the same beacon
-    BOOL different = ![[self.lastBeacon kcsBeaconInfo] isEqual:[closestBeacon kcsBeaconInfo]] && (self.lastBeacon == nil || [closestBeacon compareByDistance:self.lastBeacon] == NSOrderedAscending);
+    BOOL different = closestBeacon && ![[self.lastBeacon kcsBeaconInfo] isEqual:[closestBeacon kcsBeaconInfo]] && (self.lastBeacon == nil || [closestBeacon compareByDistance:self.lastBeacon] == NSOrderedAscending);
     
     if (different && [[NSDate date] timeIntervalSinceDate:self.lastRanging] >= self.monitoringInterval) {
         self.lastBeacon = closestBeacon;
