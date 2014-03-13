@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2798768D18CF46A0001F33FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798768C18CF46A0001F33FD /* Foundation.framework */; };
-		2798769218CF46A0001F33FD /* KCSIBeacon.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2798769118CF46A0001F33FD /* KCSIBeacon.h */; };
-		2798769418CF46A0001F33FD /* KCSIBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = 2798769318CF46A0001F33FD /* KCSIBeacon.m */; };
 		2798769B18CF46A0001F33FD /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798769A18CF46A0001F33FD /* XCTest.framework */; };
 		2798769C18CF46A0001F33FD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798768C18CF46A0001F33FD /* Foundation.framework */; };
 		2798769E18CF46A0001F33FD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798769D18CF46A0001F33FD /* UIKit.framework */; };
@@ -37,18 +35,16 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				2798769218CF46A0001F33FD /* KCSIBeacon.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		275748C618D1EE3600E5D561 /* KCSIBeacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCSIBeacon.h; sourceTree = "<group>"; };
 		2798768918CF46A0001F33FD /* libKCSIBeacon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKCSIBeacon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2798768C18CF46A0001F33FD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2798769018CF46A0001F33FD /* KCSIBeacon-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KCSIBeacon-Prefix.pch"; sourceTree = "<group>"; };
-		2798769118CF46A0001F33FD /* KCSIBeacon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KCSIBeacon.h; sourceTree = "<group>"; };
-		2798769318CF46A0001F33FD /* KCSIBeacon.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KCSIBeacon.m; sourceTree = "<group>"; };
 		2798769918CF46A0001F33FD /* KCSIBeaconTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KCSIBeaconTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2798769A18CF46A0001F33FD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		2798769D18CF46A0001F33FD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -116,8 +112,7 @@
 		2798768E18CF46A0001F33FD /* KCSIBeacon */ = {
 			isa = PBXGroup;
 			children = (
-				2798769118CF46A0001F33FD /* KCSIBeacon.h */,
-				2798769318CF46A0001F33FD /* KCSIBeacon.m */,
+				275748C618D1EE3600E5D561 /* KCSIBeacon.h */,
 				279876B218CF4D3E001F33FD /* KCSBeaconManager.h */,
 				279876B318CF4D3E001F33FD /* KCSBeaconManager.m */,
 				279876B518CF9A5E001F33FD /* KCSBeaconInfo.h */,
@@ -234,7 +229,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2798769418CF46A0001F33FD /* KCSIBeacon.m in Sources */,
 				279876B418CF4D3E001F33FD /* KCSBeaconManager.m in Sources */,
 				279876B718CF9A5E001F33FD /* KCSBeaconInfo.m in Sources */,
 			);

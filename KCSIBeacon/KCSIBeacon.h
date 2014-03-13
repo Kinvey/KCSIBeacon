@@ -2,7 +2,7 @@
 //  KCSIBeacon.h
 //  KCSIBeacon
 //
-//  Created by Michael Katz on 3/11/14.
+//
 //  Copyright 2014 Kinvey, Inc
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,12 @@
 //  limitations under the License.
 //
 
-#import <Foundation/Foundation.h>
+#ifndef KCSIBeacon_KCSIBeacon_h
+#define KCSIBeacon_KCSIBeacon_h
 
-@interface KCSIBeacon : NSObject
+//Module header file
 
-@end
+#import "KCSBeaconManager.h"
+#import "KCSBeaconInfo.h"
+
+#endif

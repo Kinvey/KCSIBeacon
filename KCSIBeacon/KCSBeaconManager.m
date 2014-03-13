@@ -137,7 +137,6 @@
 
 - (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLBeaconRegion *)region
 {
-    NSLog(@"%@", region);
     [self.knownRegions addObject:[region kcsBeaconInfo]];
     if (state == CLRegionStateInside) {
         
@@ -155,12 +154,10 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    NSLog(@"%@",error);
 }
 
 - (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error
 {
-    NSLog(@"%@", error);
     if (self.delegate && [self.delegate respondsToSelector:@selector(rangingFailedForRegion:withError:)]) {
         [self.delegate rangingFailedForRegion:nil withError:error];
     }
@@ -173,6 +170,10 @@
     }
     
     self.lastBoundary = [NSDate date];
+    if ([self.insideRegions containsObject:[region kcsBeaconInfo]]) {
+        //being inside this region has already been determined, so no need to repost this message
+        return;
+    }
     [self.insideRegions addObject:[region kcsBeaconInfo]];
     
     
@@ -182,7 +183,7 @@
     
     if (self.postsLocalNotification) {
         UILocalNotification *notification = [[UILocalNotification alloc] init];
-        notification.alertBody = NSLocalizedString(@"You're inside the region %@", region.identifier);
+        notification.alertBody = [NSString stringWithFormat:NSLocalizedString(@"You're inside the region '%@'", @"region enter notification"), region.identifier];
         notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"enter"};
 
         /*
@@ -211,7 +212,7 @@
     
     if (self.postsLocalNotification) {
         UILocalNotification *notification = [[UILocalNotification alloc] init];
-        notification.alertBody = NSLocalizedString(@"You're outside the region %@", region.identifier);
+        notification.alertBody = [NSString stringWithFormat:NSLocalizedString(@"You're outside the region '%@'", @"region exit notification"), region.identifier];
         notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"exit"};
         
         /*
