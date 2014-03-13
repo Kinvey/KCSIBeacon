@@ -52,7 +52,14 @@
     if (self.proximity > beacon.proximity) {
         result = NSOrderedDescending;
     } else if (self.proximity == beacon.proximity) {
-        result = [@(self.accuracy) compare:@(beacon.accuracy)];
+        //handle they're both the same but or the other is -1 (can't find the beacon); then the one with a value is the "closest" 
+        if (self.accuracy < 0 && beacon.accuracy > 0) {
+            result = NSOrderedDescending;
+        } else if (self.accuracy > 0 && beacon.accuracy < 0) {
+            result = NSOrderedAscending;
+        } else {
+            result = [@(self.accuracy) compare:@(beacon.accuracy)];
+        }
     } else { //self.proximity < beacon.proximity
         if (self.proximity != CLProximityUnknown) {
             result = NSOrderedAscending;
