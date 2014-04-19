@@ -1,4 +1,4 @@
-KCSIBeacon [![MIT License](http://b.repl.ca/v1/License-Apache2.0-blue.png)](LICENSE)
+KCSIBeacon [![Apache License](http://b.repl.ca/v1/License-Apache2.0-blue.png)](LICENSE)
 ==========
 
 Generic iBeacon Management and Utilities

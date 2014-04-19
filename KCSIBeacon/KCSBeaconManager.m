@@ -23,6 +23,8 @@
 
 @import UIKit;
 
+NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
+
 @interface KCSBeaconManager () <CLLocationManagerDelegate>
 @property (nonatomic, strong) CLLocationManager* locationManager;
 @property (nonatomic, strong) CLBeacon* lastBeacon;
@@ -84,12 +86,12 @@
     return _locationManager;
 }
 
-- (void) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier
+- (BOOL) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier error:(NSError**)error
 {
-    [self startMonitoringForRegion:UUIDString identifier:identifier major:nil minor:nil];
+    return [self startMonitoringForRegion:UUIDString identifier:identifier major:nil minor:nil error:error];
 }
 
-- (void) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier major:(NSNumber*)major minor:(NSNumber*)minor
+- (BOOL) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier major:(NSNumber*)major minor:(NSNumber*)minor error:(NSError**)error
 {
     /* TODO
      + authorizationStatus
@@ -100,23 +102,71 @@
      + isMonitoringAvailableForClass:
      + isRangingAvailable
      */
+    BOOL locationEnabled = [CLLocationManager locationServicesEnabled];
+    if (!locationEnabled) {
+        NSDictionary* info = @{NSLocalizedDescriptionKey : @"Location Services Not Enabled"};
+        *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesNotEnabled userInfo:info];
+        return NO;
+
+    }
     
+    CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
+    if (authStatus == kCLAuthorizationStatusDenied) {
+        if (error) {
+            NSDictionary* info = @{NSLocalizedDescriptionKey : @"User has denied access to Location Services"};
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesDenied userInfo:info];
+        }
+        return NO;
+    } else if (authStatus == kCLAuthorizationStatusRestricted) {
+        if (error) {
+            NSDictionary* info = @{NSLocalizedDescriptionKey : @"App is prevented from accessing Location Services"};
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesRestricted userInfo:info];
+        }
+        return NO;
+    }
     
-    /* TODO
-     You can also postpone notifying a user upon entering a beacon region until the user turns on the device’s display. To do so, simply set the value of the beacon region’s notifyEntryStateOnDisplay property value to YES and set the region’s notifyOnEntry property to NO when you register the beacon region. To prevent redundant notifications from being delivered to the user, post a local notification only once per region entry.
-     
-    */
+    BOOL beaconsAvailable = [CLLocationManager isMonitoringAvailableForClass:[CLBeaconRegion class]];
+    if (!beaconsAvailable) {
+        if (error) {
+            NSDictionary* info = @{NSLocalizedDescriptionKey : @"iBeacon region monitoring is not available."};
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconCannotMonitorCLBeaconRegion userInfo:info];
+        }
+        return NO;
+    }
     
+    BOOL rangeStatus = [CLLocationManager isRangingAvailable];
+    if (!rangeStatus) {
+        if (error) {
+            NSDictionary* info = @{NSLocalizedDescriptionKey : @"iBeacon ranging is not available"};
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconCannotRangeIBeacons userInfo:info];
+        }
+        return NO;
+    }
+    
+
     // Create the beacon region to be monitored.
     NSUUID* uuid = [[NSUUID alloc] initWithUUIDString:UUIDString];
+    if (!uuid) {
+        if (error) {
+            NSDictionary* info = @{NSLocalizedDescriptionKey : @"Supplied UUID string is not a UUID", @"uuidString":UUIDString};
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconInvalidUUID userInfo:info];
+        }
+        return NO;
+    }
     
-    CLBeaconRegion *beaconRegion;
+    CLBeaconRegion *beaconRegion = nil;
     if (minor) {
         beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid major:[major unsignedIntValue] minor:[minor unsignedIntValue] identifier:identifier];
     } else if (major) {
         beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid major:[major unsignedIntValue] identifier:identifier];
     } else {
         beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid identifier:identifier];
+    }
+    
+    if (!beaconRegion) {
+#warning        //TODO: fix
+        assert(beaconRegion);
+        return NO;
     }
     
     beaconRegion.notifyEntryStateOnDisplay = YES;
@@ -132,6 +182,8 @@
     [self checkForEntryAfterDelay:beaconRegion]; //some beacon types don't trigger entry events if inside
 
     _lastRanging = [NSDate date];
+
+    return YES;
 }
 
 
