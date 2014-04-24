@@ -93,21 +93,11 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
 
 - (BOOL) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier major:(NSNumber*)major minor:(NSNumber*)minor error:(NSError**)error
 {
-    /* TODO
-     + authorizationStatus
-     + locationServicesEnabled
-     + deferredLocationUpdatesAvailable
-     + significantLocationChangeMonitoringAvailable
-     + headingAvailable
-     + isMonitoringAvailableForClass:
-     + isRangingAvailable
-     */
     BOOL locationEnabled = [CLLocationManager locationServicesEnabled];
     if (!locationEnabled) {
         NSDictionary* info = @{NSLocalizedDescriptionKey : @"Location Services Not Enabled"};
         *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesNotEnabled userInfo:info];
         return NO;
-
     }
     
     CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
@@ -164,8 +154,8 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     }
     
     if (!beaconRegion) {
-#warning        //TODO: fix
-        assert(beaconRegion);
+        NSDictionary* info = @{NSLocalizedDescriptionKey : @"Beacon region could not be created"};
+        *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconInvalidBeaconRegion userInfo:info];
         return NO;
     }
     

@@ -29,6 +29,7 @@ typedef NS_ENUM(NSInteger, KCSIBeaconErrorCode) {
     KCSIBeaconCannotRangeIBeacons = -1002,
 
     KCSIBeaconInvalidUUID = -1100,
+    KCSIBeaconInvalidBeaconRegion = -1101,
 
     KCSIBeaconLocationServicesNotEnabled = -100,
     KCSIBeaconLocationServicesDenied = kCLAuthorizationStatusDenied,
