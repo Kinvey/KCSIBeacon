@@ -97,6 +97,12 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     if (!locationEnabled) {
         NSDictionary* info = @{NSLocalizedDescriptionKey : @"Location Services Not Enabled"};
         *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesNotEnabled userInfo:info];
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+            if ([CLLocationManager locationServicesEnabled]) {
+                //now have location management
+                [self startMonitoringForRegion:UUIDString identifier:identifier major:major minor:minor error:NULL];
+            }
+        }];
         return NO;
     }
     
@@ -106,6 +112,12 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
             NSDictionary* info = @{NSLocalizedDescriptionKey : @"User has denied access to Location Services"};
             *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesDenied userInfo:info];
         }
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+            if ([CLLocationManager locationServicesEnabled]) {
+                //now have location management
+                [self startMonitoringForRegion:UUIDString identifier:identifier major:major minor:minor error:NULL];
+            }
+        }];
         return NO;
     } else if (authStatus == kCLAuthorizationStatusRestricted) {
         if (error) {
