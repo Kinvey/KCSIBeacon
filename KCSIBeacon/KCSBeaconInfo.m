@@ -49,7 +49,11 @@
 - (NSComparisonResult)compareByDistance:(CLBeacon *)beacon
 {
     NSComparisonResult result = NSOrderedSame;
-    if (self.proximity > beacon.proximity) {
+    if (beacon.proximity == CLProximityUnknown) {
+        if (self.proximity != CLProximityUnknown) {
+            result = NSOrderedAscending;
+        }
+    } else if (self.proximity > beacon.proximity) {
         result = NSOrderedDescending;
     } else if (self.proximity == beacon.proximity) {
         //handle they're both the same but or the other is -1 (can't find the beacon); then the one with a value is the "closest" 
