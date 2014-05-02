@@ -96,7 +96,9 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     BOOL locationEnabled = [CLLocationManager locationServicesEnabled];
     if (!locationEnabled) {
         NSDictionary* info = @{NSLocalizedDescriptionKey : @"Location Services Not Enabled"};
-        *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesNotEnabled userInfo:info];
+        if (error) {
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconLocationServicesNotEnabled userInfo:info];
+        }
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
             if ([CLLocationManager locationServicesEnabled]) {
                 //now have location management
@@ -167,7 +169,9 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     
     if (!beaconRegion) {
         NSDictionary* info = @{NSLocalizedDescriptionKey : @"Beacon region could not be created"};
-        *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconInvalidBeaconRegion userInfo:info];
+        if (error) {
+            *error = [NSError errorWithDomain:KCSIBeaconErrorDomain code:KCSIBeaconInvalidBeaconRegion userInfo:info];
+        }
         return NO;
     }
     
