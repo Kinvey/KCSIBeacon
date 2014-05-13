@@ -241,14 +241,20 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     
     if (self.postsLocalNotification) {
         UILocalNotification *notification = [[UILocalNotification alloc] init];
-        notification.alertBody = [NSString stringWithFormat:NSLocalizedString(@"You're inside the region '%@'", @"region enter notification"), region.identifier];
-        notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"enter"};
-
-        /*
-         If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
-         If it's not, iOS will display the notification to the user.
-         */
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        NSString* body = [NSString stringWithFormat:NSLocalizedString(@"You're inside the region '%@'", @"region enter notification"), region.identifier];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(localNotificationMessageForBeacon:event:)]) {
+            body = [self.delegate localNotificationMessageForBeacon:region event:KCSIBeaconRegionEventEnter];
+        }
+        if (body) {
+            notification.alertBody = body;
+            notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"enter"};
+            
+            /*
+             If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
+             If it's not, iOS will display the notification to the user.
+             */
+            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
     }
     
     if (![[manager rangedRegions] containsObject:region]) {
@@ -270,14 +276,20 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     
     if (self.postsLocalNotification) {
         UILocalNotification *notification = [[UILocalNotification alloc] init];
-        notification.alertBody = [NSString stringWithFormat:NSLocalizedString(@"You're outside the region '%@'", @"region exit notification"), region.identifier];
-        notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"exit"};
-        
-        /*
-         If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
-         If it's not, iOS will display the notification to the user.
-         */
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        NSString* body = [NSString stringWithFormat:NSLocalizedString(@"You're outside the region '%@'", @"region exit notification"), region.identifier];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(localNotificationMessageForBeacon:event:)]) {
+            body = [self.delegate localNotificationMessageForBeacon:region event:KCSIBeaconRegionEventExit];
+        }
+        if (body) {
+            notification.alertBody = body;
+            notification.userInfo = @{@"region":[[region kcsBeaconInfo] plistObject], @"event":@"exit"};
+            
+            /*
+             If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
+             If it's not, iOS will display the notification to the user.
+             */
+            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
     }
 }
 

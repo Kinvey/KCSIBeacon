@@ -36,6 +36,12 @@ typedef NS_ENUM(NSInteger, KCSIBeaconErrorCode) {
     KCSIBeaconLocationServicesRestricted = -102,
 };
 
+
+typedef NS_ENUM(NSInteger, KCSIBeaconRegionEvent) {
+    KCSIBeaconRegionEventEnter,
+    KCSIBeaconRegionEventExit
+};
+
 /**
  Delegate for the `KCSBeaconManager` class. The implementing object can get notified for various beacon events.
  
@@ -93,6 +99,19 @@ typedef NS_ENUM(NSInteger, KCSIBeaconErrorCode) {
  @since 1.0.0
  */
 - (void) exitedRegion:(CLBeaconRegion*)region;
+
+/**
+ *  Implement this method to override the default message that is displayed to the user when a beacon region is entered or exited. The BeaconManager's `postsLocalNotification` property should be `YES` for this method to be called.
+ *
+ *  @param region    the beacon region triggered
+ *  @param eventCode either Enter or Exit, depending
+ *
+ *  @return the notification message to display to the user. `nil` if message should not be displayed
+ *
+ *  @since 1.1.0
+ */
+- (NSString*) localNotificationMessageForBeacon:(CLBeaconRegion*)region event:(KCSIBeaconRegionEvent)eventCode;
+
 @end
 
 /**
