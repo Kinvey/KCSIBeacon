@@ -166,4 +166,13 @@ typedef NS_ENUM(NSInteger, KCSIBeaconRegionEvent) {
 */
 - (BOOL) startMonitoringForRegion:(NSString*)UUIDString identifier:(NSString*)identifier major:(NSNumber*)major minor:(NSNumber*)minor error:(NSError**)error;
 
+/** Stops ranging and monitoring a region.
+ 
+ @param identifier the string to identify the region to stop monitoring.
+ @return YES if a the region exists and was attempted to stop.
+ @since 1.2.0
+ */
+- (BOOL) stopMonitoringForRegion:(NSString*)identifier;
+
+
 @end

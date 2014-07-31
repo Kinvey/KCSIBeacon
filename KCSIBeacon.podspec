@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "KCSIBeacon"
-  s.version      = "1.1.0"
+  s.version      = "1.2.0"
   s.summary      = "Generic iBeacon Management and Utilities"
 
   s.description  = "A wrapper for `CLLocationManager` calls to determine entry/exiting beacon regions and ranging.
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.author           = { "Michael Katz" => "michael@kinvey.com" }
   s.social_media_url = 'http://twitter.com/Kinvey'
   s.platform         = :ios, '7.0'
-  s.source           = { :git => "https://github.com/KinveyLabs/KCSIBeacon.git", :tag => 'v1.1.0'}
+  s.source           = { :git => "https://github.com/KinveyLabs/KCSIBeacon.git", :tag => 'v1.2.0'}
   s.source_files     = 'KCSIBeacon/**/*.{h,m}'
   s.frameworks       = 'CoreLocation', 'CoreBluetooth', 'UIKit'
   s.requires_arc     = true

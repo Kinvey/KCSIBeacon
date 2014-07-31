@@ -192,6 +192,22 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
     return YES;
 }
 
+- (BOOL) stopMonitoringForRegion:(NSString*)identifier
+{
+  NSSet* regions = [self.locationManager monitoredRegions];
+  BOOL stopped = NO;
+  for (CLRegion* region in regions) {
+    if ([region.identifier isEqualToString:identifier]) {
+      [self.locationManager stopMonitoringForRegion:region];
+      if ([region isKindOfClass:[CLBeaconRegion class]]) {
+        [self.locationManager stopRangingBeaconsInRegion:(CLBeaconRegion*)region];
+      }
+      stopped = YES;
+    }
+  }
+  return stopped;
+}
+
 
 - (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLBeaconRegion *)region
 {
