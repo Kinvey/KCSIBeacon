@@ -108,6 +108,12 @@ NSString* const KCSIBeaconErrorDomain = @"KCSIBeaconErrorDomain";
         return NO;
     }
     
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorizedWhenInUse) {
+            [self.locationManager requestWhenInUseAuthorization];
+        }
+    }
+
     CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
     if (authStatus == kCLAuthorizationStatusDenied) {
         if (error) {
