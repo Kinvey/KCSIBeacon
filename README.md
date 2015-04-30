@@ -57,7 +57,7 @@ KCSIBeacon is available as a [CocoaPods](http://cocoapods.org) to install add to
 
 ## License
 
-Copyright (c) 2014 Kinvey, Inc.
+Copyright (c) 2015 Kinvey, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
